@@ -19,8 +19,10 @@ func (player *Player) Draw(screen *tl.Screen) {
 	switch player.Direction {
 	case down:
 		player.Y++
+		player.X++
 	case up:
 		player.Y--
+		player.X++
 		player.Direction = down
 	}
 	if player.BorderCollision() {
@@ -32,7 +34,6 @@ func (player *Player) Draw(screen *tl.Screen) {
 		Fg: tl.ColorGreen,
 		Ch: '🚁',
 	})
-
 	player.Entity.Draw(screen)
 }
 
@@ -48,8 +49,8 @@ func NewPlayer() *Player {
 }
 
 func (player *Player) Tick(event tl.Event) {
-	if event.Type == tl.EventKey { // Is it a keyboard event?
-		switch event.Key { // If so, switch on the pressed key.
+	if event.Type == tl.EventKey {
+		switch event.Key {
 		case tl.KeyArrowUp:
 			player.Direction = up
 		case tl.KeyArrowDown:
@@ -71,11 +72,12 @@ func NewGamescreen() *GameScreen {
 	gs.LandscapeEntity = NewLandscape(70, 25)
 	player := NewPlayer()
 
-	gs.AddEntity(gs.LandscapeEntity)
 	gs.AddEntity(gs.LandscapeEntity.BackgroundRectange)
+	gs.AddEntity(gs.LandscapeEntity)
+	gs.AddEntity(gs.LandscapeEntity.LandscapeGround)
 	gs.AddEntity(player)
 
-	sg.Screen().SetFps(3)
+	sg.Screen().SetFps(5)
 
 	return gs
 }
