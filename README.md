@@ -6,10 +6,14 @@ Inspired by tristangoossens implementation of [Snake in Go](https://github.com/t
 
 Title Screen:
 
-[!alt text](https://github.com/vinayman/helicopter-go/tree/main/assets/TitleScreen.png)
+<p>
+    <img src="assets/TitleScreen.png" />
+</p>
 
 Game Play:
-![alt text](https://github.com/vinayman/helicopter-go/tree/main/assets/Gameplay.png)
+<p>
+    <img src="assets/Gameplay.png" />
+</p>
 
 
 ### Clone and play
