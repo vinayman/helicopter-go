@@ -9,6 +9,7 @@ type Landscape struct {
 	Height             int
 	LandscapeBorder    map[Coordinates]int
 	DeadArea           map[Coordinates]int
+	SuccessArea        map[Coordinates]int
 	LandscapeGround    *tl.Rectangle
 }
 
@@ -19,8 +20,9 @@ func NewLandscape(w, h int) *Landscape {
 	landscape.Entity = tl.NewEntity(1, 1, w, h)
 	landscape.LandscapeBorder = make(map[Coordinates]int)
 	landscape.DeadArea = make(map[Coordinates]int)
+	landscape.SuccessArea = make(map[Coordinates]int)
 	landscape.BackgroundRectange = tl.NewRectangle(1, 1, landscape.Width-1, landscape.Height-1, tl.ColorBlue)
-	landscape.LandscapeGround = tl.NewRectangle(1, 22, landscape.Width-1, 2, tl.ColorGreen)
+	landscape.LandscapeGround = tl.NewRectangle(1, 22, landscape.Width-2, 2, tl.ColorGreen)
 
 	for x := 0; x < landscape.Width; x++ {
 		landscape.LandscapeBorder[Coordinates{x, 0}] = 1
@@ -30,7 +32,7 @@ func NewLandscape(w, h int) *Landscape {
 
 	for y := 0; y < landscape.Height+1; y++ {
 		landscape.LandscapeBorder[Coordinates{0, y}] = 1
-		landscape.LandscapeBorder[Coordinates{landscape.Width, y}] = 1
+		landscape.SuccessArea[Coordinates{landscape.Width - 1, y}] = 1
 	}
 
 	return landscape
@@ -44,13 +46,23 @@ func (landscape *Landscape) Contains(c Coordinates) bool {
 	return exists
 }
 
+func (landscape *Landscape) SuccessContains(c Coordinates) bool {
+	_, exists := landscape.SuccessArea[c]
+	return exists
+}
+
 func (landscape *Landscape) Draw(screen *tl.Screen) {
 	for i := range landscape.LandscapeBorder {
 		screen.RenderCell(i.X, i.Y, &tl.Cell{
 			Bg: tl.ColorWhite,
 		})
 	}
-	for x := 1; x < landscape.Width-1; x++ {
+	for i := range landscape.SuccessArea {
+		screen.RenderCell(i.X, i.Y, &tl.Cell{
+			Bg: tl.ColorWhite,
+		})
+	}
+	for x := 1; x < landscape.Width-2; x++ {
 		screen.RenderCell(x, landscape.Height-3, &tl.Cell{
 			Fg: tl.ColorCyan, Ch: '🌳',
 		})
