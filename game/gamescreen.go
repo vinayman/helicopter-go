@@ -11,11 +11,12 @@ type Player struct {
 
 type GameScreen struct {
 	tl.Level
-	LandscapeEntity *Landscape
-	PlayerEntity    *Player
-	Obstacles       []*Obstacle
-	score           int
-	FPS             float64
+	LandscapeEntity     *Landscape
+	PlayerEntity        *Player
+	Obstacles           []*Obstacle
+	score               int
+	FPS                 float64
+	ObstacleCoordinates map[Coordinates]int
 }
 
 func (player *Player) Draw(screen *tl.Screen) {
@@ -33,8 +34,7 @@ func (player *Player) Draw(screen *tl.Screen) {
 		gs = NewGamescreen(score)
 		sg.Screen().SetLevel(gs)
 	}
-	if player.BorderCollision() {
-		// Calls the GameOver function to take the player to the game over screen.
+	if player.BorderCollision() || player.ObstacleCollision() {
 		Gameover(gs.score)
 	}
 
@@ -75,8 +75,12 @@ func (player *Player) SuccessCollision() bool {
 	return gs.LandscapeEntity.SuccessContains(Coordinates{player.X, player.Y})
 }
 
+func (player *Player) ObstacleCollision() bool {
+	_, exists := gs.ObstacleCoordinates[Coordinates{player.X, player.Y}]
+	return exists
+}
+
 func NewGamescreen(score int) *GameScreen {
-	// Creates the gamescreen level and create the entities
 	gs = new(GameScreen)
 	gs.Level = tl.NewBaseLevel(tl.Cell{
 		Bg: tl.ColorBlack,
@@ -86,15 +90,16 @@ func NewGamescreen(score int) *GameScreen {
 	gs.LandscapeEntity = NewLandscape(70, 25)
 	player := NewPlayer()
 
-	gs.Obstacles = append(gs.Obstacles, NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle())
-
 	gs.AddEntity(gs.LandscapeEntity.BackgroundRectange)
 	gs.AddEntity(gs.LandscapeEntity)
 	gs.AddEntity(gs.LandscapeEntity.LandscapeGround)
 	gs.AddEntity(player)
 
+	gs.Obstacles = append(gs.Obstacles, NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle())
+	gs.ObstacleCoordinates = make(map[Coordinates]int)
 	for _, obstacle := range gs.Obstacles {
 		gs.AddEntity(obstacle)
+		gs.ObstacleCoordinates[Coordinates{obstacle.Position.X, obstacle.Position.Y}] = 1
 	}
 
 	if score > 0 && score%5 == 0 {

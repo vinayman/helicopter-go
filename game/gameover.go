@@ -15,9 +15,7 @@ type Gameoverscreen struct {
 	OptionsText []*tl.Text
 }
 
-// Tick will listen for a keypress to initiate the game.
 func (ts *Gameoverscreen) Tick(event tl.Event) {
-	// Checks if the event is a keypress event and the key pressed is the enter key.
 	if event.Type == tl.EventKey {
 		if event.Key == tl.KeyEnter {
 			gs = NewGamescreen(0)

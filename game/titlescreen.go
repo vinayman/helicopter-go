@@ -14,9 +14,7 @@ type TitleScreen struct {
 	OptionsText []*tl.Text
 }
 
-// NewTitleScreen will create a new titlescreen and return it.
 func NewTitleScreen() *TitleScreen {
-	// Create a title screen and its objects.
 	ts = new(TitleScreen)
 	ts.Level = tl.NewBaseLevel(tl.Cell{
 		Bg: tl.ColorBlack,
@@ -33,9 +31,7 @@ func NewTitleScreen() *TitleScreen {
 	return ts
 }
 
-// Tick will listen for a keypress to initiate the game.
 func (ts *TitleScreen) Tick(event tl.Event) {
-	// Checks if the event is a keypress event and the key pressed is the enter key.
 	if event.Type == tl.EventKey {
 		if event.Key == tl.KeyEnter {
 			gs = NewGamescreen(0)
