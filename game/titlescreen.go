@@ -38,7 +38,7 @@ func (ts *TitleScreen) Tick(event tl.Event) {
 	// Checks if the event is a keypress event and the key pressed is the enter key.
 	if event.Type == tl.EventKey {
 		if event.Key == tl.KeyEnter {
-			gs = NewGamescreen()
+			gs = NewGamescreen(0)
 			sg.Screen().SetLevel(gs)
 		}
 	}

@@ -14,6 +14,8 @@ type GameScreen struct {
 	LandscapeEntity *Landscape
 	PlayerEntity    *Player
 	Obstacles       []*Obstacle
+	score           int
+	FPS             float64
 }
 
 func (player *Player) Draw(screen *tl.Screen) {
@@ -27,12 +29,13 @@ func (player *Player) Draw(screen *tl.Screen) {
 		player.Direction = down
 	}
 	if player.SuccessCollision() {
-		gs = NewGamescreen()
+		score := gs.score + 5
+		gs = NewGamescreen(score)
 		sg.Screen().SetLevel(gs)
 	}
 	if player.BorderCollision() {
 		// Calls the GameOver function to take the player to the game over screen.
-		Gameover()
+		Gameover(gs.score)
 	}
 
 	screen.RenderCell(player.X, player.Y, &tl.Cell{
@@ -72,12 +75,14 @@ func (player *Player) SuccessCollision() bool {
 	return gs.LandscapeEntity.SuccessContains(Coordinates{player.X, player.Y})
 }
 
-func NewGamescreen() *GameScreen {
+func NewGamescreen(score int) *GameScreen {
 	// Creates the gamescreen level and create the entities
 	gs = new(GameScreen)
 	gs.Level = tl.NewBaseLevel(tl.Cell{
 		Bg: tl.ColorBlack,
 	})
+	gs.FPS = 6
+	gs.score = score
 	gs.LandscapeEntity = NewLandscape(70, 25)
 	player := NewPlayer()
 
@@ -92,7 +97,11 @@ func NewGamescreen() *GameScreen {
 		gs.AddEntity(obstacle)
 	}
 
-	sg.Screen().SetFps(7)
+	if score > 0 && score%5 == 0 {
+		gs.FPS += 1
+	}
+
+	sg.Screen().SetFps(gs.FPS)
 
 	return gs
 }

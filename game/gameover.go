@@ -1,6 +1,7 @@
 package helicoptergame
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -19,7 +20,7 @@ func (ts *Gameoverscreen) Tick(event tl.Event) {
 	// Checks if the event is a keypress event and the key pressed is the enter key.
 	if event.Type == tl.EventKey {
 		if event.Key == tl.KeyEnter {
-			gs = NewGamescreen()
+			gs = NewGamescreen(0)
 			sg.Screen().SetLevel(gs)
 		}
 		if event.Key == tl.KeyDelete || event.Key == tl.KeyBackspace || event.Key == tl.KeyBackspace2 {
@@ -29,7 +30,7 @@ func (ts *Gameoverscreen) Tick(event tl.Event) {
 	}
 }
 
-func Gameover() {
+func Gameover(score int) {
 	gos := new(Gameoverscreen)
 	gos.Level = tl.NewBaseLevel(tl.Cell{
 		Bg: tl.ColorBlack,
@@ -37,8 +38,9 @@ func Gameover() {
 	logofile, _ := ioutil.ReadFile("util/gameover-logo.txt")
 	gos.Logo = tl.NewEntityFromCanvas(10, 3, tl.CanvasFromString(string(logofile)))
 	gos.OptionsText = []*tl.Text{
-		tl.NewText(47, 13, "Press \"Enter\" to restart!", tl.ColorBlack, tl.ColorWhite),
-		tl.NewText(47, 15, "Press \"Delete\" to quit!", tl.ColorBlack, tl.ColorWhite),
+		tl.NewText(47, 13, fmt.Sprintf("You scored %d!", score), tl.ColorBlack, tl.ColorWhite),
+		tl.NewText(47, 15, "Press \"Enter\" to restart!", tl.ColorBlack, tl.ColorWhite),
+		tl.NewText(47, 17, "Press \"Delete\" to quit!", tl.ColorBlack, tl.ColorWhite),
 	}
 
 	gos.AddEntity(gos.Logo)
