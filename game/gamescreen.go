@@ -1,6 +1,8 @@
 package helicoptergame
 
-import tl "github.com/JoelOtter/termloop"
+import (
+	tl "github.com/JoelOtter/termloop"
+)
 
 type Player struct {
 	*tl.Entity
@@ -29,13 +31,13 @@ func (player *Player) Draw(screen *tl.Screen) {
 		player.X++
 		player.Direction = down
 	}
+	if player.BorderCollision() || player.ObstacleCollision() {
+		Gameover(gs.score)
+	}
 	if player.SuccessCollision() {
 		score := gs.score + 5
 		gs = NewGamescreen(score)
 		sg.Screen().SetLevel(gs)
-	}
-	if player.BorderCollision() || player.ObstacleCollision() {
-		Gameover(gs.score)
 	}
 
 	screen.RenderCell(player.X, player.Y, &tl.Cell{
@@ -95,11 +97,13 @@ func NewGamescreen(score int) *GameScreen {
 	gs.AddEntity(gs.LandscapeEntity.LandscapeGround)
 	gs.AddEntity(player)
 
-	gs.Obstacles = append(gs.Obstacles, NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle(), NewObstacle())
 	gs.ObstacleCoordinates = make(map[Coordinates]int)
-	for _, obstacle := range gs.Obstacles {
+	for i := 0; i < 6; i++ {
+		obstacle := NewObstacle()
+		gs.Obstacles = append(gs.Obstacles, obstacle)
 		gs.AddEntity(obstacle)
 		gs.ObstacleCoordinates[Coordinates{obstacle.Position.X, obstacle.Position.Y}] = 1
+		gs.ObstacleCoordinates[Coordinates{obstacle.Position.X, obstacle.Position.Y - 1}] = 1
 	}
 
 	if score > 0 && score%5 == 0 {
